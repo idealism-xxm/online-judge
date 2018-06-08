@@ -4,6 +4,7 @@ import cn.idealismxxm.onlinejudge.dao.ContestSubmissionDao;
 import cn.idealismxxm.onlinejudge.domain.entity.ContestSubmission;
 import cn.idealismxxm.onlinejudge.domain.entity.Submission;
 import cn.idealismxxm.onlinejudge.domain.enums.ErrorCodeEnum;
+import cn.idealismxxm.onlinejudge.domain.enums.VisibleStatusEnum;
 import cn.idealismxxm.onlinejudge.domain.exception.BusinessException;
 import cn.idealismxxm.onlinejudge.domain.util.JsonUtil;
 import cn.idealismxxm.onlinejudge.service.ContestSubmissionService;
@@ -40,6 +41,7 @@ public class ContestSubmissionServiceImpl implements ContestSubmissionService {
         }
 
         // 2. 提交记录入库
+        submission.setVisibleStatus(VisibleStatusEnum.CONTEST_VISIBLE.getCode());
         Integer submissionId = submissionService.submit(submission, username);
 
         // 3. 比赛提交记录入库

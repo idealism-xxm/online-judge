@@ -15,6 +15,7 @@ import cn.idealismxxm.onlinejudge.service.ProblemService;
 import cn.idealismxxm.onlinejudge.service.SubmissionService;
 import cn.idealismxxm.onlinejudge.service.jms.producer.MessageProducer;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,29 +132,10 @@ public class SubmissionServiceImpl implements SubmissionService {
     // TODO page类型的方法可以用联合查询
     @Override
     public Pagination<Submission> pageSubmissionByQueryParam(QueryParam queryParam) {
-        // 1. 参数校验
-        if (queryParam == null) {
-            throw BusinessException.buildBusinessException(ErrorCodeEnum.ILLEGAL_ARGUMENT);
-        }
-
-        // 2. 设置查询条件的map
-        Map<String, Object> queryMap = new HashMap<>(16);
-        queryMap.putAll(queryParam.getParam());
-
-        // 处理 指定 submission 的主键列表的情况
-        if (queryMap.get("contestId") != null) {
-            if (queryMap.get("contestId") instanceof Integer) {
-                Integer contestId = (Integer) queryMap.get("contestId");
-                List<Integer> ids = contestSubmissionService.listSubmissionIdByContestId(contestId);
-                // 如果为空，则直接返回空分页列表
-                if (CollectionUtils.isEmpty(ids)) {
-                    return new Pagination<>();
-                }
-                queryMap.put("ids", ids);
-            } else {
-                throw BusinessException.buildBusinessException(ErrorCodeEnum.ILLEGAL_ARGUMENT);
-            }
-            queryMap.remove("contestId");
+        // 1. 初始化 queryMap
+        Map<String, Object> queryMap = this.initQueryMap(queryParam);
+        if(MapUtils.isEmpty(queryMap)) {
+            return new Pagination<>();
         }
 
         // 3. 获取数据总数，并设置相关的分页信息
@@ -186,5 +168,49 @@ public class SubmissionServiceImpl implements SubmissionService {
         }
 
         return submissionPagination;
+    }
+
+    /**
+     * 根据 queryParam 初始化 queryMap
+     *
+     * @param queryParam 查询参数封装
+     * @return queryMap
+     */
+    private Map<String, Object> initQueryMap(QueryParam queryParam) {
+        // 1. 参数校验
+        if (queryParam == null) {
+            throw BusinessException.buildBusinessException(ErrorCodeEnum.ILLEGAL_ARGUMENT);
+        }
+
+        // 2. 设置查询条件的map
+        Map<String, Object> queryMap = new HashMap<>(16);
+        queryMap.putAll(queryParam.getParam());
+
+        // 3. 参数校验
+        if (queryMap.get("visibleStatus") != null && queryMap.get("visibleStatus") instanceof Integer) {
+            Integer visibleStatus = (Integer) queryMap.get("visibleStatus");
+            VisibleStatusEnum visibleStatusEnum = VisibleStatusEnum.getVisibleStatusEnumByCode(visibleStatus);
+            if (visibleStatusEnum == null || visibleStatusEnum == VisibleStatusEnum.PRIVATE) {
+                throw BusinessException.buildBusinessException(ErrorCodeEnum.ILLEGAL_ARGUMENT);
+            }
+        }
+
+        // 4. 处理 指定 submission 的主键列表的情况
+        if (queryMap.get("contestId") != null) {
+            if (queryMap.get("contestId") instanceof Integer) {
+                Integer contestId = (Integer) queryMap.get("contestId");
+                List<Integer> ids = contestSubmissionService.listSubmissionIdByContestId(contestId);
+                // 如果为空，则直接返回空分页列表
+                if (CollectionUtils.isEmpty(ids)) {
+                    return null;
+                }
+                queryMap.put("ids", ids);
+            } else {
+                throw BusinessException.buildBusinessException(ErrorCodeEnum.ILLEGAL_ARGUMENT);
+            }
+            queryMap.remove("contestId");
+        }
+
+        return queryMap;
     }
 }

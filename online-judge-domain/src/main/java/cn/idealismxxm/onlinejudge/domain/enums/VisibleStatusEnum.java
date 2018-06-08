@@ -33,4 +33,18 @@ public enum VisibleStatusEnum {
     public String getDescription() {
         return description;
     }
+
+    /**
+     * 通过 可见状态 代码 返回 可见状态 枚举类型
+     * @param code 可见状态 代码
+     * @return 可见状态 枚举类型
+     */
+    public static VisibleStatusEnum getVisibleStatusEnumByCode(Integer code) {
+        for (VisibleStatusEnum  visibleStatusEnum : values()) {
+            if(visibleStatusEnum.getCode().equals(code)) {
+                return visibleStatusEnum;
+            }
+        }
+        return null;
+    }
 }
