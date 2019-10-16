@@ -1,0 +1,10 @@
+# build wars of judger and web
+# (just for downloading all dependencies jar
+# in advance when local debugging)
+FROM maven:3-jdk-8
+
+WORKDIR /online-judge
+
+COPY . .
+
+RUN mvn package -pl online-judge-judger,online-judge-web -am -Dmaven.test.skip=true

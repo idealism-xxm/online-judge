@@ -1,0 +1,32 @@
+version: "3"
+services:
+  online-judge-mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+    volumes:
+      - ./docker-volumes/mysql:/var/lib/mysql
+
+  online-judge-activemq:
+    image: rmohr/activemq:5.15.9
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+    volumes:
+#        - ./docker-volumes/activemq/conf:/opt/activemq/conf
+        - ./docker-volumes/activemq/data:/opt/activemq/data
+
+  online-judge-main:
+    image: idealism/online-judge
+    ports:
+      - "80:8080"
+      - "5005:5005"
+    environment:
+      TZ: Asia/Shanghai
+      JPDA_ADDRESS: 5005
+      JPDA_TRANSPORT: dt_socket
+    links:
+      - online-judge-mysql:online-judge-mysql
+      - online-judge-activemq:online-judge-activemq

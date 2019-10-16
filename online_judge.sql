@@ -22,6 +22,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP SCHEMA IF EXISTS `online_judge`;
 CREATE SCHEMA `online_judge` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `online_judge`;
 
 -- ----------------------------
 -- Table structure for contest
