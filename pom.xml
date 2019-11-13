@@ -29,7 +29,7 @@
 
         <spring.version>5.0.2.RELEASE</spring.version>
 
-        <jackson.version>2.9.4</jackson.version>
+        <jackson.version>2.10.1</jackson.version>
 
         <apache-lang3.version>3.7</apache-lang3.version>
         <apache-collections4.version>4.1</apache-collections4.version>
