@@ -27,7 +27,7 @@
         <httl.version>1.0.11</httl.version>
         <servlet-api.version>4.0.0</servlet-api.version>
 
-        <spring.version>5.0.2.RELEASE</spring.version>
+        <spring.version>5.2.20.RELEASE</spring.version>
 
         <jackson.version>2.9.4</jackson.version>
 
